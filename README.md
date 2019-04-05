@@ -1,4 +1,4 @@
-# Exercise ? - ""
+# Exercise 1 - "Quiz Game"
 
 View on [gophercises.com](https://gophercises.com/exercises/quiz).
 
