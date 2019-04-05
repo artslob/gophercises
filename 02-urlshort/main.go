@@ -2,7 +2,7 @@ package main
 
 import (
 	"fmt"
-	"github.com/artslob/gophercises/urlshort/handlers"
+	"github.com/artslob/gophercises/02-urlshort/handlers"
 	"net/http"
 )
 
