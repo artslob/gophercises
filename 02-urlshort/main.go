@@ -18,6 +18,9 @@ func defaultMux() *http.ServeMux {
 	mux.HandleFunc("/test-result", func(w http.ResponseWriter, r *http.Request) {
 		_, _ = fmt.Fprintln(w, "Seems like you were redirected from '/test', ha?")
 	})
+	mux.HandleFunc("/yaml-result", func(w http.ResponseWriter, r *http.Request) {
+		_, _ = fmt.Fprintln(w, "Seems like you were redirected from '/yaml', ha?")
+	})
 	return mux
 }
 
@@ -34,16 +37,18 @@ func main() {
 
 	// Build the YAMLHandler using the mapHandler as the
 	// fallback
-	//	yaml := `
-	//- path: /urlshort
-	// url: https://github.com/gophercises/urlshort
-	//- path: /urlshort-final
-	// url: https://github.com/gophercises/urlshort/tree/solution
-	//`
-	//	yamlHandler, err := urlshort.YAMLHandler([]byte(yaml), mapHandler)
-	//	if err != nil {
-	//		panic(err)
-	//	}
+	yaml := `
+- path: /urlshort
+  url: https://github.com/gophercises/urlshort
+- path: /urlshort-final
+  url: https://github.com/gophercises/urlshort/tree/solution
+- path: /yaml
+  url: /yaml-result
+`
+	yamlHandler, err := handlers.YAMLHandler([]byte(yaml), mapHandler)
+	if err != nil {
+		panic(err)
+	}
 	fmt.Println("Starting the server on http://127.1:8080")
-	_ = http.ListenAndServe(":8080", mapHandler)
+	_ = http.ListenAndServe(":8080", yamlHandler)
 }

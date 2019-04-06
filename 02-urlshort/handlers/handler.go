@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"gopkg.in/yaml.v2"
 	"net/http"
 )
 
@@ -38,7 +39,24 @@ func MapHandler(pathsToUrls map[string]string, fallback http.Handler) http.Handl
 //
 // See MapHandler to create a similar http.HandlerFunc via
 // a mapping of paths to urls.
-//func YAMLHandler(yml []byte, fallback http.Handler) (http.HandlerFunc, error) {
-//	// TODO: Implement this...
-//	return nil, nil
-//}
+func YAMLHandler(yml []byte, fallback http.Handler) (http.HandlerFunc, error) {
+	pathsToUrl, err := parseYaml(yml)
+	if err != nil {
+		return nil, err
+	}
+	return MapHandler(pathsToUrl, fallback), nil
+}
+
+func parseYaml(input []byte) (map[string]string, error) {
+	var parsed []struct {
+		Path, Url string
+	}
+	if err := yaml.Unmarshal(input, &parsed); err != nil {
+		return nil, err
+	}
+	result := map[string]string{}
+	for _, p := range parsed {
+		result[p.Path] = p.Url
+	}
+	return result, nil
+}
