@@ -16,6 +16,7 @@ func checkError(err error) {
 
 func main() {
 	filename := flag.String("filename", "story.json", "json file that contains stories to parse")
+	flag.Parse()
 	fmt.Println("Reading story from:", *filename)
 
 	content, err := ioutil.ReadFile(*filename)
