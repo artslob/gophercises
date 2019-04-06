@@ -16,6 +16,7 @@ func checkError(err error) {
 
 func main() {
 	filename := flag.String("filename", "story.json", "json file that contains stories to parse")
+	port := flag.Int("port", 8888, "the port to start the server on")
 	flag.Parse()
 	fmt.Println("Reading story from:", *filename)
 
@@ -27,9 +28,8 @@ func main() {
 
 	fmt.Println("Story successfully parsed")
 
-	port := ":8888"
-	fmt.Printf("Starting the server on http://127.1%s\n", port)
-	err = http.ListenAndServe(port, storyHandler(mainStory))
+	fmt.Printf("Starting the server on http://127.1:%d\n", *port)
+	err = http.ListenAndServe(fmt.Sprintf(":%d", *port), storyHandler(mainStory))
 	checkError(err)
 }
 
