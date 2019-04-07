@@ -7,6 +7,7 @@ import (
 	"html/template"
 	"io/ioutil"
 	"net/http"
+	"strings"
 )
 
 func checkError(err error) {
@@ -38,7 +39,10 @@ func main() {
 
 func storyHandler(mainStory story.Story) http.HandlerFunc {
 	return func(writer http.ResponseWriter, request *http.Request) {
-		path := request.URL.Path
+		path := strings.TrimSpace(request.URL.Path)
+		if path == "" || path == "/" {
+			http.Redirect(writer, request, "/intro", http.StatusSeeOther)
+		}
 		if chapter, ok := mainStory[path[1:]]; ok {
 			_ = layout.Execute(writer, chapter)
 		} else {
