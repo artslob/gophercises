@@ -18,8 +18,8 @@ func main() {
 	filename := flag.String("filename", "story.json", "json file that contains stories to parse")
 	port := flag.Int("port", 8888, "the port to start the server on")
 	flag.Parse()
-	fmt.Println("Reading story from:", *filename)
 
+	fmt.Println("Reading story from:", *filename)
 	content, err := ioutil.ReadFile(*filename)
 	checkError(err)
 
