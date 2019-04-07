@@ -4,6 +4,7 @@ import (
 	"flag"
 	"fmt"
 	"github.com/artslob/gophercises/03-cyoa/story"
+	"html/template"
 	"io/ioutil"
 	"net/http"
 )
@@ -13,6 +14,8 @@ func checkError(err error) {
 		panic(err)
 	}
 }
+
+var layout = template.Must(template.ParseFiles("template.html"))
 
 func main() {
 	filename := flag.String("filename", "story.json", "json file that contains stories to parse")
@@ -36,8 +39,8 @@ func main() {
 func storyHandler(mainStory story.Story) http.HandlerFunc {
 	return func(writer http.ResponseWriter, request *http.Request) {
 		path := request.URL.Path
-		if a, ok := mainStory[path[1:]]; ok {
-			_, _ = writer.Write([]byte(a.Title))
+		if chapter, ok := mainStory[path[1:]]; ok {
+			_ = layout.Execute(writer, chapter)
 		} else {
 			_, _ = writer.Write([]byte("How did you get here?"))
 		}
