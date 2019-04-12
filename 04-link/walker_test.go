@@ -58,6 +58,21 @@ var tables = []struct {
 			},
 		},
 	},
+	{
+		`
+		<html>
+		<body>
+			<a href="/dog-cat">dog cat <!-- commented text SHOULD NOT be included! --></a>
+		</body>
+		</html>
+		`,
+		[]Link{
+			{
+				Href: "/dog-cat",
+				Text: "dog cat",
+			},
+		},
+	},
 }
 
 func TestWalker(t *testing.T) {
