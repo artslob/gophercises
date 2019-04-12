@@ -12,6 +12,9 @@ var tables = []struct {
 	expectedLinks []Link
 }{
 	{
+		// empty text = zero links
+	},
+	{
 		`
 		<html>
 		<body>
