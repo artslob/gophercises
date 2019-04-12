@@ -8,8 +8,7 @@ import (
 )
 
 type Link struct {
-	Href string
-	Text strings.Builder
+	Href, Text string
 }
 
 type Walker struct {
@@ -25,7 +24,9 @@ func (w *Walker) Walk(node *html.Node) {
 				break
 			}
 		}
-		w.getText(node, &newLink.Text)
+		var builder strings.Builder
+		w.getText(node, &builder)
+		newLink.Text = builder.String()
 		w.Links = append(w.Links, newLink)
 		return
 	}
@@ -61,6 +62,6 @@ func main() {
 	walker.Walk(doc)
 	for _, link := range walker.Links {
 		fmt.Println("link:", link.Href)
-		fmt.Println("text:", link.Text.String())
+		fmt.Println("text:", link.Text)
 	}
 }

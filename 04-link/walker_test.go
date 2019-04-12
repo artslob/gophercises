@@ -7,13 +7,9 @@ import (
 	"testing"
 )
 
-type expectedLink struct {
-	href, text string
-}
-
 var tables = []struct {
 	text          string
-	expectedLinks []expectedLink
+	expectedLinks []Link
 }{
 	{
 		`
@@ -24,10 +20,10 @@ var tables = []struct {
 		</body>
 		</html>
 		`,
-		[]expectedLink{
+		[]Link{
 			{
-				href: "/other-page",
-				text: "A link to another page",
+				Href: "/other-page",
+				Text: "A link to another page",
 			},
 		},
 	},
@@ -47,11 +43,11 @@ func TestWalker(t *testing.T) {
 		}
 		for j, link := range parsedLinks {
 			expected := testCase.expectedLinks[j]
-			if link.Href != expected.href {
-				t.Errorf("%s: expected link %q != parsed %q", testCaseString, expected.href, link.Href)
+			if link.Href != expected.Href {
+				t.Errorf("%s: expected link %q != parsed %q", testCaseString, expected.Href, link.Href)
 			}
-			if link.Text.String() != expected.text {
-				t.Errorf("%s: expected text %q != parsed %q", testCaseString, expected.text, link.Text.String())
+			if link.Text != expected.Text {
+				t.Errorf("%s: expected text %q != parsed %q", testCaseString, expected.Text, link.Text)
 			}
 		}
 	}
