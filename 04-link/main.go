@@ -26,7 +26,7 @@ func (w *Walker) Walk(node *html.Node) {
 		}
 		var builder strings.Builder
 		w.getText(node, &builder)
-		newLink.Text = builder.String()
+		newLink.Text = strings.TrimSpace(builder.String())
 		w.Links = append(w.Links, newLink)
 		return
 	}

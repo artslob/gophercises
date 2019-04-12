@@ -27,6 +27,37 @@ var tables = []struct {
 			},
 		},
 	},
+	{
+		`
+		<html>
+		<head>
+			<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+		</head>
+		<body>
+			<h1>Social stuffs</h1>
+			<div>
+				<a href="https://www.twitter.com/tw">
+					Check me out on twitter
+					<i class="fa fa-twitter" aria-hidden="true"></i>
+				</a>
+				<a href="https://github.com/">
+					Go to <strong>Github</strong>!
+				</a>
+			</div>
+		</body>
+		</html>
+		`,
+		[]Link{
+			{
+				Href: "https://www.twitter.com/tw",
+				Text: "Check me out on twitter",
+			},
+			{
+				Href: "https://github.com/",
+				Text: "Go to Github!",
+			},
+		},
+	},
 }
 
 func TestWalker(t *testing.T) {
