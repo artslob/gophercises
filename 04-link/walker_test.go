@@ -42,7 +42,7 @@ func TestWalker(t *testing.T) {
 		walker.Walk(doc)
 		parsedLinks := walker.Links
 		if len(parsedLinks) != len(testCase.expectedLinks) {
-			t.Errorf("%s: len of parsed links %d not equal to expected len %d",
+			t.Fatalf("%s: len of parsed links %d not equal to expected len %d",
 				testCaseString, len(parsedLinks), len(testCase.expectedLinks))
 		}
 		for j, link := range parsedLinks {
