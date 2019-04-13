@@ -11,4 +11,4 @@ So I advise you to sign up. Good luck!_
 Each solution has separate folder:
 1. [Quiz Game](../../tree/master/01-quiz)
 2. [URL Shortener](../../tree/master/02-urlshort)
-2. [Choose Your Own Adventure](../../tree/master/03-cyoa)
+3. [Choose Your Own Adventure](../../tree/master/03-cyoa)
