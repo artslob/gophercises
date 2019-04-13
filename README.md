@@ -12,3 +12,4 @@ Each solution has separate folder:
 1. [Quiz Game](../../tree/master/01-quiz)
 2. [URL Shortener](../../tree/master/02-urlshort)
 3. [Choose Your Own Adventure](../../tree/master/03-cyoa)
+4. [HTML Link Parser](../../tree/master/04-link)
