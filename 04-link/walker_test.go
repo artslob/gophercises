@@ -2,14 +2,13 @@ package main
 
 import (
 	"fmt"
-	"golang.org/x/net/html"
-	"strings"
+	"github.com/artslob/gophercises/04-link/parser"
 	"testing"
 )
 
 var tables = []struct {
 	text          string
-	expectedLinks []Link
+	expectedLinks []parser.Link
 }{
 	{
 		// empty text = zero links
@@ -23,7 +22,7 @@ var tables = []struct {
 		</body>
 		</html>
 		`,
-		[]Link{
+		[]parser.Link{
 			{
 				Href: "/other-page",
 				Text: "A link to another page",
@@ -50,7 +49,7 @@ var tables = []struct {
 		</body>
 		</html>
 		`,
-		[]Link{
+		[]parser.Link{
 			{
 				Href: "https://www.twitter.com/tw",
 				Text: "Check me out on twitter",
@@ -126,7 +125,7 @@ var tables = []struct {
 		</body>
 		</html>
 		`,
-		[]Link{
+		[]parser.Link{
 			{
 				Href: "#",
 				Text: "Login",
@@ -149,7 +148,7 @@ var tables = []struct {
 		</body>
 		</html>
 		`,
-		[]Link{
+		[]parser.Link{
 			{
 				Href: "/dog-cat",
 				Text: "dog cat",
@@ -161,10 +160,7 @@ var tables = []struct {
 func TestWalker(t *testing.T) {
 	for i, testCase := range tables {
 		testCaseString := fmt.Sprintf("test case %d", i)
-		r := strings.NewReader(testCase.text)
-		doc, _ := html.Parse(r)
-		walker := Walker{}
-		walker.Walk(doc)
+		walker := parser.NewWalker(testCase.text)
 		parsedLinks := walker.Links
 		if len(parsedLinks) != len(testCase.expectedLinks) {
 			t.Fatalf("%s: len of parsed links %d not equal to expected len %d",
