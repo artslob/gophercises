@@ -13,4 +13,5 @@ Each solution has separate folder:
 2. [URL Shortener](../../tree/master/02-urlshort)
 3. [Choose Your Own Adventure](../../tree/master/03-cyoa)
 4. [HTML Link Parser](../../tree/master/04-link)
+5. [Sitemap Builder](../../tree/master/05-sitemap)
 6. [Hacker Rank Problem](../../tree/master/06-hr)
