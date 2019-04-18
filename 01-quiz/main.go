@@ -11,6 +11,7 @@ import (
 	"os"
 	"strconv"
 	"strings"
+	"time"
 )
 
 type Quiz struct {
@@ -51,28 +52,33 @@ func shuffleQuizzes(slice []Quiz) {
 	}
 }
 
-func checkQuiz(sc *bufio.Scanner, problemNo int, quiz Quiz, solved chan<- bool) {
-	fmt.Printf("Problem #%d: %s = ", problemNo, quiz.input)
-	if !sc.Scan() && sc.Err() != nil {
-		log.Fatal("error while reading input")
-	}
-	got := strings.TrimSpace(sc.Text())
+func checkQuiz(input string, quiz Quiz) bool {
+	got := strings.TrimSpace(input)
 	if got == "" {
-		solved <- false
-		return
+		return false
 	}
 	parsedGot, err := strconv.Atoi(got)
 	if err != nil {
 		fmt.Println("Expected integer. Going to the next question!")
-		solved <- false
-		return
+		return false
 	}
-	solved <- parsedGot == quiz.answer
+	return parsedGot == quiz.answer
+}
+
+func readUserInput(ch chan<- string) {
+	sc := bufio.NewScanner(os.Stdin)
+	for {
+		if !sc.Scan() && sc.Err() != nil {
+			log.Fatal("error while reading input")
+		}
+		ch <- sc.Text()
+	}
 }
 
 func main() {
 	filename := flag.String("csv", "problems.csv", "a csv file in the format 'question,answer'")
 	shuffle := flag.Bool("shuffle", true, `set to false if dont want shuffled quizzes: '-shuffle=false'`)
+	timeForAnswer := flag.Int("time", 3, "time which is given for the answer")
 	flag.Parse()
 
 	fmt.Println("Checking for file:", *filename)
@@ -81,13 +87,19 @@ func main() {
 		shuffleQuizzes(quizzes)
 	}
 
-	sc := bufio.NewScanner(os.Stdin)
+	inputChannel := make(chan string)
+	go readUserInput(inputChannel)
+
 	solved := 0
 	for i, quiz := range quizzes {
-		solvedChannel := make(chan bool)
-		go checkQuiz(sc, i+1, quiz, solvedChannel)
-		if <-solvedChannel {
-			solved++
+		fmt.Printf("Problem #%d: %s = ", i+1, quiz.input)
+		select {
+		case input := <-inputChannel:
+			if checkQuiz(input, quiz) {
+				solved++
+			}
+		case <-time.After(time.Duration(*timeForAnswer) * time.Second):
+			fmt.Println("Times up! Going to next question.")
 		}
 	}
 	fmt.Printf("you solved %d of %d tasks!\n", solved, len(quizzes))
