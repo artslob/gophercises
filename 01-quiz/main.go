@@ -18,25 +18,13 @@ type Quiz struct {
 	answer int
 }
 
-func shuffle(slice []Quiz) {
-	for i := range slice {
-		j := rand.Intn(i + 1)
-		slice[i], slice[j] = slice[j], slice[i]
-	}
-}
-
-func main() {
-	filename := flag.String("csv", "problems.csv", "a csv file in the format 'question,answer'")
-	flag.Parse()
-	fmt.Println("Checking for file:", *filename)
-	file, err := os.Open(*filename)
+func parseQuizzesFromFile(filename string) []Quiz {
+	file, err := os.Open(filename)
 	if err != nil {
 		log.Fatal(err)
 	}
 	reader := csv.NewReader(bufio.NewReader(file))
-	scanner := bufio.NewScanner(os.Stdin)
 	var quizzes []Quiz
-	solved := 0
 	for {
 		line, err := reader.Read()
 		if err == io.EOF {
@@ -53,7 +41,26 @@ func main() {
 		}
 		quizzes = append(quizzes, Quiz{line[0], expected})
 	}
+	return quizzes
+}
+
+func shuffle(slice []Quiz) {
+	for i := range slice {
+		j := rand.Intn(i + 1)
+		slice[i], slice[j] = slice[j], slice[i]
+	}
+}
+
+func main() {
+	filename := flag.String("csv", "problems.csv", "a csv file in the format 'question,answer'")
+	flag.Parse()
+
+	fmt.Println("Checking for file:", *filename)
+	quizzes := parseQuizzesFromFile(*filename)
 	shuffle(quizzes)
+
+	scanner := bufio.NewScanner(os.Stdin)
+	solved := 0
 	for i, quiz := range quizzes {
 		fmt.Printf("Problem #%d: %s = ", i+1, quiz.input)
 		if !scanner.Scan() && scanner.Err() != nil {
