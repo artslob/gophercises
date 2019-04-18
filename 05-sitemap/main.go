@@ -9,6 +9,8 @@ import (
 
 func main() {
 	url := flag.String("url", "google.com", "links map of this url is built")
+	flag.Parse()
+
 	s := sitemap.NewSiteMap()
 	s.BuildMap(*url)
 	bytes, err := sitemap.GetXml(s.GetMap())
