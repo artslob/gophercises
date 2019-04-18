@@ -19,6 +19,10 @@ type Quiz struct {
 	answer int
 }
 
+func (q Quiz) isRightAnswer(input int) bool {
+	return q.answer == input
+}
+
 func parseQuizzesFromFile(filename string) []Quiz {
 	file, err := os.Open(filename)
 	if err != nil {
@@ -62,7 +66,7 @@ func checkQuiz(input string, quiz Quiz) bool {
 		fmt.Println("Expected integer. Going to the next question!")
 		return false
 	}
-	return parsedGot == quiz.answer
+	return quiz.isRightAnswer(parsedGot)
 }
 
 func readUserInput(ch chan<- string) {
