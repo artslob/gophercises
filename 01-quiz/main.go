@@ -75,7 +75,8 @@ func main() {
 		}
 		parsedGot, err := strconv.Atoi(got)
 		if err != nil {
-			log.Fatalf("error parsing your input: %s", err)
+			fmt.Println("Expected integer. Going to the next question!")
+			continue
 		}
 		if parsedGot == quiz.answer {
 			solved++
