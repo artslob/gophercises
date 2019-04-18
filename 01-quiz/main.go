@@ -44,7 +44,7 @@ func parseQuizzesFromFile(filename string) []Quiz {
 	return quizzes
 }
 
-func shuffle(slice []Quiz) {
+func shuffleQuizzes(slice []Quiz) {
 	for i := range slice {
 		j := rand.Intn(i + 1)
 		slice[i], slice[j] = slice[j], slice[i]
@@ -53,11 +53,14 @@ func shuffle(slice []Quiz) {
 
 func main() {
 	filename := flag.String("csv", "problems.csv", "a csv file in the format 'question,answer'")
+	shuffle := flag.Bool("shuffle", true, `set to false if dont want shuffled quizzes: '-shuffle=false'`)
 	flag.Parse()
 
 	fmt.Println("Checking for file:", *filename)
 	quizzes := parseQuizzesFromFile(*filename)
-	shuffle(quizzes)
+	if *shuffle {
+		shuffleQuizzes(quizzes)
+	}
 
 	scanner := bufio.NewScanner(os.Stdin)
 	solved := 0
