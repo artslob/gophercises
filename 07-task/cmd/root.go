@@ -1,16 +1,24 @@
 package cmd
 
 import (
+	"encoding/binary"
 	"fmt"
 	"github.com/boltdb/bolt"
 	"github.com/spf13/cobra"
 	"log"
 	"os"
+	"strings"
 )
 
 var db *bolt.DB
 
 const taskBucket = "taskBucket"
+
+func i64tob(value uint64) []byte {
+	b := make([]byte, 8)
+	binary.BigEndian.PutUint64(b, value)
+	return b
+}
 
 var rootCmd = &cobra.Command{
 	Use:   "task",
@@ -20,8 +28,17 @@ var rootCmd = &cobra.Command{
 var addCmd = &cobra.Command{
 	Use:   "add",
 	Short: "Add a new task to your TODO list",
+	Args:  cobra.MinimumNArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("add!")
+		todo := strings.Join(args, " ")
+		err := db.Update(func(tx *bolt.Tx) error {
+			b := tx.Bucket([]byte(taskBucket))
+			id, _ := b.NextSequence()
+			return b.Put(i64tob(id), []byte(todo))
+		})
+		if err != nil {
+			log.Fatal(err)
+		}
 	},
 }
 
