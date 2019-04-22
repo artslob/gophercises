@@ -2,9 +2,15 @@ package cmd
 
 import (
 	"fmt"
+	"github.com/boltdb/bolt"
 	"github.com/spf13/cobra"
+	"log"
 	"os"
 )
+
+var db *bolt.DB
+
+const taskBucket = "taskBucket"
 
 var rootCmd = &cobra.Command{
 	Use:   "task",
@@ -31,7 +37,20 @@ var listCmd = &cobra.Command{
 	Use:   "list",
 	Short: "List all of your incomplete tasks",
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("list!")
+		err := db.View(func(tx *bolt.Tx) error {
+			b := tx.Bucket([]byte(taskBucket))
+			if b.Stats().KeyN == 0 {
+				fmt.Println("Your TODO list is empty.")
+				return nil
+			}
+			return b.ForEach(func(k, v []byte) error {
+				fmt.Printf("key=%s, value=%s\n", k, v)
+				return nil
+			})
+		})
+		if err != nil {
+			log.Fatal(err)
+		}
 	},
 }
 
@@ -39,8 +58,20 @@ func init() {
 	rootCmd.AddCommand(addCmd, doCmd, listCmd)
 }
 
-func Execute() {
-	if err := rootCmd.Execute(); err != nil {
+func Execute(dbParameter *bolt.DB) {
+	if dbParameter == nil {
+		log.Fatal("db should be non-nil")
+	}
+	db = dbParameter
+	err := db.Update(func(tx *bolt.Tx) error {
+		_, err := tx.CreateBucketIfNotExists([]byte(taskBucket))
+		return err
+	})
+	if err != nil {
+		fmt.Println(err)
+		os.Exit(1)
+	}
+	if err = rootCmd.Execute(); err != nil {
 		fmt.Println(err)
 		os.Exit(1)
 	}
