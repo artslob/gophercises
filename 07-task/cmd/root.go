@@ -61,8 +61,10 @@ var listCmd = &cobra.Command{
 				fmt.Println("Your TODO list is empty.")
 				return nil
 			}
+			i := 1
 			return b.ForEach(func(k, v []byte) error {
-				fmt.Printf("key=%s, value=%s\n", k, v)
+				fmt.Printf("%d. %s\n", i, v)
+				i++
 				return nil
 			})
 		})
