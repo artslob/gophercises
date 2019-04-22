@@ -53,6 +53,7 @@ var doCmd = &cobra.Command{
 var listCmd = &cobra.Command{
 	Use:   "list",
 	Short: "List all of your incomplete tasks",
+	Args:  cobra.NoArgs,
 	Run: func(cmd *cobra.Command, args []string) {
 		err := db.View(func(tx *bolt.Tx) error {
 			b := tx.Bucket([]byte(taskBucket))
