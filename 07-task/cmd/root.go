@@ -7,6 +7,7 @@ import (
 	"github.com/spf13/cobra"
 	"log"
 	"os"
+	"strconv"
 	"strings"
 )
 
@@ -45,8 +46,42 @@ var addCmd = &cobra.Command{
 var doCmd = &cobra.Command{
 	Use:   "do",
 	Short: "Mark a task on your TODO list as complete",
+	Args:  cobra.ExactArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("do!")
+		number, err := strconv.Atoi(strings.TrimSpace(args[0]))
+		if err != nil {
+			log.Fatalf("Failed to parse integer: '%s'.", args[0])
+		}
+		if number < 1 {
+			fmt.Println("Number should be more than 0!")
+			return
+		}
+		err = db.Update(func(tx *bolt.Tx) error {
+			b := tx.Bucket([]byte(taskBucket))
+			bucketSize := b.Stats().KeyN
+			if bucketSize == 0 {
+				fmt.Println("TODO list is empty.")
+				return nil
+			}
+			if number > bucketSize {
+				fmt.Printf("There are only %d items in list.\n", bucketSize)
+				return nil
+			}
+			c := b.Cursor()
+			i := 0
+			for k, v := c.First(); k != nil; k, v = c.Next() {
+				i++
+				if i != number {
+					continue
+				}
+				fmt.Printf("You have completed the '%s' task.\n", string(v))
+				return c.Delete()
+			}
+			return nil
+		})
+		if err != nil {
+			log.Fatal(err)
+		}
 	},
 }
 
