@@ -110,8 +110,30 @@ var listCmd = &cobra.Command{
 	},
 }
 
+var clearCmd = &cobra.Command{
+	Use:   "clear",
+	Short: "Delete all tasks from TODO list",
+	Args:  cobra.NoArgs,
+	Run: func(cmd *cobra.Command, args []string) {
+		err := db.Update(func(tx *bolt.Tx) error {
+			b := tx.Bucket([]byte(taskBucket))
+			c := b.Cursor()
+			for k, _ := c.First(); k != nil; k, _ = c.Next() {
+				if err := c.Delete(); err != nil {
+					return err
+				}
+			}
+			return nil
+		})
+		if err != nil {
+			log.Fatal(err)
+		}
+		fmt.Println("TODO list cleared successfully.")
+	},
+}
+
 func init() {
-	rootCmd.AddCommand(addCmd, doCmd, listCmd)
+	rootCmd.AddCommand(addCmd, doCmd, listCmd, clearCmd)
 }
 
 func Execute(dbParameter *bolt.DB) {
