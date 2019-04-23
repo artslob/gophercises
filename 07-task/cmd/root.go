@@ -40,6 +40,7 @@ var addCmd = &cobra.Command{
 		if err != nil {
 			log.Fatal(err)
 		}
+		fmt.Printf("Added '%s' to your task list.\n", todo)
 	},
 }
 
