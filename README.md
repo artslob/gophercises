@@ -15,3 +15,4 @@ Each solution has separate folder:
 4. [HTML Link Parser](../../tree/master/04-link)
 5. [Sitemap Builder](../../tree/master/05-sitemap)
 6. [Hacker Rank Problem](../../tree/master/06-hr)
+7. [CLI Task Manager](../../tree/master/07-task)
