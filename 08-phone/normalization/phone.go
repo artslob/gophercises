@@ -1,4 +1,4 @@
-package phones
+package normalization
 
 import "unicode"
 

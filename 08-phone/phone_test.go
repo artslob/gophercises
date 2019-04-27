@@ -2,7 +2,7 @@ package main
 
 import (
 	"fmt"
-	"github.com/artslob/gophercises/08-phone/phones"
+	"github.com/artslob/gophercises/08-phone/normalization"
 	"testing"
 )
 
@@ -12,10 +12,10 @@ func ExampleHello() {
 }
 
 var cases = []struct {
-	input, expected phones.Phone
+	input, expected normalization.Phone
 }{
-	{"", "",},
-	{" ", "",},
+	{"", ""},
+	{" ", ""},
 	{
 		"234567890",
 		"234567890",
@@ -58,7 +58,7 @@ func TestPhoneNormalize(t *testing.T) {
 	for _, testCase := range cases {
 		input := testCase.input
 		expected := testCase.expected
-		result := phones.Normalize(input)
+		result := normalization.Normalize(input)
 		if result != expected {
 			t.Error("for", input, "normalization expected to be", expected, "got:", result)
 		}
