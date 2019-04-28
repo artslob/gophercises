@@ -30,16 +30,16 @@ func main() {
 		if err := rows.Scan(&id, &phone); err != nil {
 			log.Fatal(err)
 		}
-		phoneSet[norm.Normalize(norm.Phone(phone))] = struct{}{}
-	}
-	_, err = db.Exec("DELETE FROM db.phones")
-	if err != nil {
-		log.Fatal(err)
-	}
-	for phone := range phoneSet {
-		_, err := db.Exec("INSERT INTO db.phones (phone) VALUES ($1)", phone)
-		if err != nil {
-			log.Fatal(err)
+		normalizedPhone := norm.Normalize(norm.Phone(phone))
+		if _, ok := phoneSet[normalizedPhone]; ok {
+			if _, err := db.Exec("DELETE FROM db.phones WHERE id = $1", id); err != nil {
+				log.Fatal(err)
+			}
+		} else {
+			phoneSet[normalizedPhone] = struct{}{}
+			if _, err := db.Exec("UPDATE db.phones SET phone = $1 WHERE id = $2", normalizedPhone, id); err != nil {
+				log.Fatal(err)
+			}
 		}
 	}
 }
