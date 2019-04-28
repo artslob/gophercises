@@ -58,7 +58,7 @@ func TestPhoneNormalize(t *testing.T) {
 	for _, testCase := range cases {
 		input := testCase.input
 		expected := testCase.expected
-		result := normalization.Normalize(input)
+		result := input.Normalize()
 		if result != expected {
 			t.Error("for", input, "normalization expected to be", expected, "got:", result)
 		}

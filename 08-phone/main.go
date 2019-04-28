@@ -31,7 +31,7 @@ func main() {
 		if err := rows.Scan(&id, &phone); err != nil {
 			log.Fatal(err)
 		}
-		normalizedPhone := norm.Normalize(norm.Phone(phone))
+		normalizedPhone := norm.Phone(phone).Normalize()
 		if _, ok := phoneSet[normalizedPhone]; ok {
 			if _, err := db.Exec("DELETE FROM db.phones WHERE id = $1", id); err != nil {
 				log.Fatal(err)

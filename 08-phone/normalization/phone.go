@@ -4,7 +4,7 @@ import "unicode"
 
 type Phone string
 
-func Normalize(phone Phone) Phone {
+func (phone Phone) Normalize() Phone {
 	var result []rune
 	for _, r := range phone {
 		if unicode.IsDigit(r) {
