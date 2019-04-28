@@ -21,6 +21,7 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
+	defer func() { _ = rows.Close() }()
 	phoneSet := make(map[norm.Phone]struct{})
 	for rows.Next() {
 		var (
