@@ -17,3 +17,4 @@ Each solution has separate folder:
 6. [Hacker Rank Problem](../../tree/master/06-hr)
 7. [CLI Task Manager](../../tree/master/07-task)
 8. [Database Phone Number Normalizer](../../tree/master/08-phone)
+9. [Deck of Cards](../../tree/master/09-deck)
