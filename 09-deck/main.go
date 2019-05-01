@@ -15,4 +15,8 @@ func main() {
 	for _, card := range *d {
 		fmt.Println(card)
 	}
+	fmt.Println(len(*d), cap(*d))
+	fmt.Println(d.GetTopCard())
+	fmt.Println(d.GetTopCard())
+	fmt.Println(len(*d), cap(*d))
 }

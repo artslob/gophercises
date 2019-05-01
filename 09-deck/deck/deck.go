@@ -18,6 +18,12 @@ func New() *Deck {
 	return &result
 }
 
+func (d *Deck) GetTopCard() Card {
+	result := (*d)[len(*d)-1]
+	*d = (*d)[:len(*d)-1]
+	return result
+}
+
 type defaultSortOrder Deck
 
 func (d defaultSortOrder) Len() int {
