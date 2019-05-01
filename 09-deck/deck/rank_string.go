@@ -14,17 +14,18 @@ func _() {
 	_ = x[Four-3]
 	_ = x[Five-4]
 	_ = x[Six-5]
-	_ = x[Eight-6]
-	_ = x[Nine-7]
-	_ = x[Ten-8]
-	_ = x[Jack-9]
-	_ = x[Queen-10]
-	_ = x[King-11]
+	_ = x[Seven-6]
+	_ = x[Eight-7]
+	_ = x[Nine-8]
+	_ = x[Ten-9]
+	_ = x[Jack-10]
+	_ = x[Queen-11]
+	_ = x[King-12]
 }
 
-const _Rank_name = "AceTwoThreeFourFiveSixEightNineTenJackQueenKing"
+const _Rank_name = "AceTwoThreeFourFiveSixSevenEightNineTenJackQueenKing"
 
-var _Rank_index = [...]uint8{0, 3, 6, 11, 15, 19, 22, 27, 31, 34, 38, 43, 47}
+var _Rank_index = [...]uint8{0, 3, 6, 11, 15, 19, 22, 27, 32, 36, 39, 43, 48, 52}
 
 func (i Rank) String() string {
 	if i >= Rank(len(_Rank_index)-1) {

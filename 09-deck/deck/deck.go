@@ -9,7 +9,7 @@ import (
 type Deck []Card
 
 func New() *Deck {
-	result := make(Deck, 0, 4*12+10)
+	result := make(Deck, 0, 4*13+10)
 	for suit := Spade; suit <= Club; suit++ {
 		for rank := Ace; rank <= King; rank++ {
 			result = append(result, Card{Suit: suit, Rank: rank})
