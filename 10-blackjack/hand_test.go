@@ -5,6 +5,9 @@ import (
 	"testing"
 )
 
+// TODO: move hand to separate package
+// TODO: make score as field of hand, score should be recalculated on creation of hand and on each draw
+
 func TestHandDraw(t *testing.T) {
 	h := hand{}
 	h.draw(deck.Card{Suit: deck.Club, Rank: deck.Ace})
