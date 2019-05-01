@@ -39,5 +39,4 @@ type Card struct {
 
 func (c Card) String() string {
 	return fmt.Sprintf("%s: %s", c.Suit, c.Rank)
-	//return c.Suit.String() + c.Rank.String()
 }
