@@ -16,7 +16,7 @@ func stringifyCard(card deck.Card) string {
 
 func stringifyHand(h hand.Hand) string {
 	var array []string
-	for _, card := range h {
+	for _, card := range *h.Cards {
 		array = append(array, stringifyCard(card))
 	}
 	return strings.Join(array, ", ")
@@ -59,7 +59,7 @@ func main() {
 		player.Draw(d.GetTopCard())
 		dealer.Draw(d.GetTopCard())
 	}
-	fmt.Printf("Dealer have: %s and *hidden* card.\n", stringifyCard(dealer[0]))
+	fmt.Printf("Dealer have: %s and *hidden* card.\n", stringifyCard((*dealer.Cards)[0]))
 
 	scanner := bufio.NewScanner(os.Stdin)
 F:
