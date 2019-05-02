@@ -29,6 +29,11 @@ func TestHandScore(t *testing.T) {
 		normal, soft int
 	}{
 		{
+			hand:   hand.New(),
+			normal: 0,
+			soft:   0,
+		},
+		{
 			hand: hand.New(
 				deck.Card{Suit: deck.Club, Rank: deck.Ace},
 				deck.Card{Suit: deck.Heart, Rank: deck.Seven},
