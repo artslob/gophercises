@@ -47,15 +47,14 @@ func TestHandScore(t *testing.T) {
 			soft:   8,
 		},
 		{
-			// FIXME: struct creation does not set scores
 			hand: hand.Hand{
 				Cards: &[]deck.Card{
 					{Suit: deck.Club, Rank: deck.Ace},
 					{Suit: deck.Heart, Rank: deck.Seven},
 				},
 			},
-			normal: 0,
-			soft:   0,
+			normal: 18,
+			soft:   8,
 		},
 		{
 			hand: hand.New(

@@ -6,9 +6,10 @@ import (
 )
 
 type Hand struct {
-	Cards       *[]deck.Card
-	normalScore int
-	softScore   int
+	Cards         *[]deck.Card
+	normalScore   int
+	softScore     int
+	lastCalcIndex int
 }
 
 func New(cards ...deck.Card) Hand {
@@ -27,17 +28,26 @@ func (h *Hand) Draw(card deck.Card) {
 	h.calcScore()
 }
 
-func (h Hand) Score() int {
+func (h *Hand) Score() int {
+	h.calcScore()
 	return h.normalScore
 }
 
-func (h Hand) SoftScore() int {
+func (h *Hand) SoftScore() int {
+	h.calcScore()
 	return h.softScore
 }
 
 func (h *Hand) calcScore() {
-	h.normalScore, h.softScore = 0, 0
-	for _, card := range *h.Cards {
+	if h == nil {
+		return
+	}
+	if h.Cards == nil || *h.Cards == nil {
+		h.normalScore, h.softScore = 0, 0
+		return
+	}
+	for ; h.lastCalcIndex < len(*h.Cards); h.lastCalcIndex++ {
+		card := (*h.Cards)[h.lastCalcIndex]
 		switch card.Rank {
 		case deck.Ace:
 			h.normalScore += 11
@@ -53,11 +63,12 @@ func (h *Hand) calcScore() {
 }
 
 // getScores first result - is normal score; second - is soft (when Ace equals to 1)
-func (h Hand) GetScores() (int, int) {
-	return h.normalScore, h.softScore
+func (h *Hand) GetScores() (int, int) {
+	h.calcScore()
+	return h.Score(), h.SoftScore()
 }
 
-func (h Hand) ScoreString() string {
+func (h *Hand) ScoreString() string {
 	normal, soft := h.GetScores()
 	return h.StringifyScores(normal, soft)
 }
