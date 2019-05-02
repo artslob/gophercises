@@ -110,3 +110,54 @@ func TestHandScore(t *testing.T) {
 		}
 	}
 }
+
+func TestHandScoreWithDraw(t *testing.T) {
+	tables := []struct {
+		hand         hand.Hand
+		normal, soft int
+	}{
+		{
+			hand:   hand.Hand{Cards: nil},
+			normal: 0,
+			soft:   0,
+		},
+		{
+			hand:   hand.New(),
+			normal: 0,
+			soft:   0,
+		},
+		{
+			hand: hand.Hand{
+				Cards: &[]deck.Card{
+					{Suit: deck.Club, Rank: deck.Six},
+					{Suit: deck.Club, Rank: deck.Seven},
+					{Suit: deck.Club, Rank: deck.Eight},
+				},
+			},
+			normal: 21,
+			soft:   21,
+		},
+		{
+			hand: hand.New(
+				deck.Card{Suit: deck.Club, Rank: deck.Two},
+				deck.Card{Suit: deck.Heart, Rank: deck.Ace},
+			),
+			normal: 13,
+			soft:   3,
+		},
+	}
+	for _, test := range tables {
+		normal, soft := test.hand.GetScores()
+		if normal != test.normal || soft != test.soft {
+			t.Fatalf("expected score before draw: %d (%d), got: %d (%d)", test.normal, test.soft, normal, soft)
+		}
+
+		test.hand.Draw(deck.Card{Suit: deck.Club, Rank: deck.Two})
+		test.hand.Draw(deck.Card{Suit: deck.Heart, Rank: deck.Ace})
+
+		normal, soft = test.hand.GetScores()
+		if normal != test.normal+13 || soft != test.soft+3 {
+			t.Fatalf("expected score after draw: %d (%d), got: %d (%d)", test.normal, test.soft, normal, soft)
+		}
+	}
+}
