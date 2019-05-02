@@ -29,6 +29,11 @@ func TestHandScore(t *testing.T) {
 		normal, soft int
 	}{
 		{
+			hand:   hand.Hand{Cards: nil},
+			normal: 0,
+			soft:   0,
+		},
+		{
 			hand:   hand.New(),
 			normal: 0,
 			soft:   0,
