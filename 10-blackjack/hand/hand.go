@@ -38,6 +38,21 @@ func (h *Hand) SoftScore() int {
 	return h.softScore
 }
 
+// getScores first result - is normal score; second - is soft (when Ace equals to 1)
+func (h *Hand) GetScores() (int, int) {
+	h.calcScore()
+	return h.Score(), h.SoftScore()
+}
+
+func (h *Hand) ScoreString() string {
+	normal, soft := h.GetScores()
+	return h.StringifyScores(normal, soft)
+}
+
+func (h Hand) StringifyScores(normal, soft int) string {
+	return fmt.Sprintf("%d (%d)", normal, soft)
+}
+
 func (h *Hand) calcScore() {
 	if h == nil {
 		return
@@ -60,19 +75,4 @@ func (h *Hand) calcScore() {
 			h.softScore += int(card.Rank) + 1
 		}
 	}
-}
-
-// getScores first result - is normal score; second - is soft (when Ace equals to 1)
-func (h *Hand) GetScores() (int, int) {
-	h.calcScore()
-	return h.Score(), h.SoftScore()
-}
-
-func (h *Hand) ScoreString() string {
-	normal, soft := h.GetScores()
-	return h.StringifyScores(normal, soft)
-}
-
-func (h Hand) StringifyScores(normal, soft int) string {
-	return fmt.Sprintf("%d (%d)", normal, soft)
 }
