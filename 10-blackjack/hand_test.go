@@ -2,20 +2,20 @@ package main
 
 import (
 	"github.com/artslob/gophercises/09-deck/deck"
+	"github.com/artslob/gophercises/10-blackjack/hand"
 	"testing"
 )
 
-// TODO: move hand to separate package
 // TODO: make score as field of hand, score should be recalculated on creation of hand and on each draw
 
 func TestHandDraw(t *testing.T) {
-	h := hand{}
-	h.draw(deck.Card{Suit: deck.Club, Rank: deck.Ace})
-	h.draw(deck.Card{Suit: deck.Heart, Rank: deck.Seven})
+	h := hand.Hand{}
+	h.Draw(deck.Card{Suit: deck.Club, Rank: deck.Ace})
+	h.Draw(deck.Card{Suit: deck.Heart, Rank: deck.Seven})
 	if len(h) != 2 {
 		t.Fatal("expected size of hand to be 2")
 	}
-	h.draw(deck.Card{Suit: deck.Diamond, Rank: deck.Jack})
+	h.Draw(deck.Card{Suit: deck.Diamond, Rank: deck.Jack})
 	if len(h) != 3 {
 		t.Fatal("expected size of hand to be 3")
 	}
@@ -27,11 +27,11 @@ func TestHandDraw(t *testing.T) {
 
 func TestHandScore(t *testing.T) {
 	tables := []struct {
-		hand         hand
+		hand         hand.Hand
 		normal, soft int
 	}{
 		{
-			hand: hand{
+			hand: hand.Hand{
 				deck.Card{Suit: deck.Club, Rank: deck.Ace},
 				deck.Card{Suit: deck.Heart, Rank: deck.Seven},
 			},
@@ -39,7 +39,7 @@ func TestHandScore(t *testing.T) {
 			soft:   8,
 		},
 		{
-			hand: hand{
+			hand: hand.Hand{
 				deck.Card{Suit: deck.Club, Rank: deck.Ace},
 				deck.Card{Suit: deck.Heart, Rank: deck.Ace},
 				deck.Card{Suit: deck.Diamond, Rank: deck.Ace},
@@ -48,14 +48,14 @@ func TestHandScore(t *testing.T) {
 			soft:   3,
 		},
 		{
-			hand: hand{
+			hand: hand.Hand{
 				deck.Card{Suit: deck.Club, Rank: deck.Ace},
 			},
 			normal: 11,
 			soft:   1,
 		},
 		{
-			hand: hand{
+			hand: hand.Hand{
 				deck.Card{Suit: deck.Club, Rank: deck.Jack},
 				deck.Card{Suit: deck.Club, Rank: deck.Queen},
 				deck.Card{Suit: deck.Spade, Rank: deck.King},
@@ -64,7 +64,7 @@ func TestHandScore(t *testing.T) {
 			soft:   30,
 		},
 		{
-			hand: hand{
+			hand: hand.Hand{
 				deck.Card{Suit: deck.Club, Rank: deck.Two},
 				deck.Card{Suit: deck.Club, Rank: deck.Three},
 				deck.Card{Suit: deck.Club, Rank: deck.Four},
@@ -74,7 +74,7 @@ func TestHandScore(t *testing.T) {
 			soft:   14,
 		},
 		{
-			hand: hand{
+			hand: hand.Hand{
 				deck.Card{Suit: deck.Club, Rank: deck.Six},
 				deck.Card{Suit: deck.Club, Rank: deck.Seven},
 				deck.Card{Suit: deck.Club, Rank: deck.Eight},
@@ -86,7 +86,7 @@ func TestHandScore(t *testing.T) {
 		},
 	}
 	for _, test := range tables {
-		normal, soft := test.hand.getScores()
+		normal, soft := test.hand.GetScores()
 		if normal != test.normal || soft != test.soft {
 			t.Fatalf("expected score: %d (%d), got: %d (%d)", test.normal, test.soft, normal, soft)
 		}

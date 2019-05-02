@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"fmt"
 	"github.com/artslob/gophercises/09-deck/deck"
+	"github.com/artslob/gophercises/10-blackjack/hand"
 	"log"
 	"os"
 	"strings"
@@ -13,7 +14,7 @@ func stringifyCard(card deck.Card) string {
 	return fmt.Sprintf("{%s}", card)
 }
 
-func stringifyHand(h hand) string {
+func stringifyHand(h hand.Hand) string {
 	var array []string
 	for _, card := range h {
 		array = append(array, stringifyCard(card))
@@ -51,12 +52,12 @@ func maxCloseToBlackjack(normal, soft int) int {
 
 func main() {
 	fmt.Println("Starting blackjack game.")
-	player, dealer := hand{}, hand{}
+	player, dealer := hand.Hand{}, hand.Hand{}
 	d := deck.New()
 	d.Shuffle()
 	for i := 0; i < 2; i++ {
-		player.draw(d.GetTopCard())
-		dealer.draw(d.GetTopCard())
+		player.Draw(d.GetTopCard())
+		dealer.Draw(d.GetTopCard())
 	}
 	fmt.Printf("Dealer have: %s and *hidden* card.\n", stringifyCard(dealer[0]))
 
@@ -64,7 +65,7 @@ func main() {
 F:
 	for {
 		fmt.Printf("\nYou have: %s.\n", stringifyHand(player))
-		fmt.Printf("Score: %s\n", player.scoreString())
+		fmt.Printf("Score: %s\n", player.ScoreString())
 		fmt.Print("Will you Stand or Hit? (h) or (s): ")
 		if !scanner.Scan() && scanner.Err() != nil {
 			log.Fatal("got error while reading input")
@@ -73,10 +74,10 @@ F:
 		switch input {
 		case "h":
 			top := d.GetTopCard()
-			player.draw(top)
+			player.Draw(top)
 			fmt.Printf("You got %s\n", stringifyCard(top))
-			normal, soft := player.getScores()
-			fmt.Printf("Score: %s\n", player.stringifyScores(normal, soft))
+			normal, soft := player.GetScores()
+			fmt.Printf("Score: %s\n", player.StringifyScores(normal, soft))
 			if soft == blackjack || normal == blackjack {
 				fmt.Println("You won!")
 				return
@@ -92,18 +93,18 @@ F:
 		}
 	}
 
-	fmt.Printf("\nYour`s score: %s\n", player.scoreString())
+	fmt.Printf("\nYour`s score: %s\n", player.ScoreString())
 
-	dNormal, dSoft := dealer.getScores()
-	fmt.Printf("Dealers turn. His hand: %s, score: %s\n", stringifyHand(dealer), dealer.stringifyScores(dNormal, dSoft))
+	dNormal, dSoft := dealer.GetScores()
+	fmt.Printf("Dealers turn. His hand: %s, score: %s\n", stringifyHand(dealer), dealer.StringifyScores(dNormal, dSoft))
 	if dNormal <= 16 || dSoft == 17 {
 		top := d.GetTopCard()
-		dealer.draw(top)
-		fmt.Printf("Dealer draws and gets the card: %s, score: %s\n", top, dealer.scoreString())
+		dealer.Draw(top)
+		fmt.Printf("Dealer draws and gets the card: %s, score: %s\n", top, dealer.ScoreString())
 	}
 
-	dealerScore := maxCloseToBlackjack(dealer.getScores())
-	playerScore := maxCloseToBlackjack(player.getScores())
+	dealerScore := maxCloseToBlackjack(dealer.GetScores())
+	playerScore := maxCloseToBlackjack(player.GetScores())
 
 	fmt.Println(whoWon(playerScore, dealerScore))
 }
