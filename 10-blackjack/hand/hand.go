@@ -53,17 +53,10 @@ func (h *Hand) ScoreString() string {
 
 func (h *Hand) BestScore() int {
 	h.calcScore()
-	if h.normalScore == h.softScore {
+	if h.normalScore <= Blackjack {
 		return h.normalScore
 	}
-	if h.normalScore <= Blackjack && h.softScore <= Blackjack {
-		return max(h.normalScore, h.softScore)
-	} else if h.normalScore <= Blackjack {
-		return h.normalScore
-	} else if h.softScore <= Blackjack {
-		return h.softScore
-	}
-	return min(h.normalScore, h.softScore)
+	return h.softScore
 }
 
 func (h *Hand) calcScore() {
@@ -88,18 +81,4 @@ func (h *Hand) calcScore() {
 			h.softScore += int(card.Rank) + 1
 		}
 	}
-}
-
-func max(a, b int) int {
-	if a > b {
-		return a
-	}
-	return b
-}
-
-func min(a, b int) int {
-	if a < b {
-		return a
-	}
-	return b
 }
