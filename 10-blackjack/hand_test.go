@@ -152,13 +152,14 @@ func TestHandScoreWithDraw(t *testing.T) {
 			t.Fatalf("expected score before draw: %d (%d), got: %d (%d)", test.normal, test.soft, normal, soft)
 		}
 
-		test.hand.Draw(deck.Card{Suit: deck.Club, Rank: deck.Two})
+		test.hand.Draw(deck.Card{Suit: deck.Club, Rank: deck.Two}, deck.Card{Suit: deck.Spade, Rank: deck.Nine})
 		lastDraw := deck.Card{Suit: deck.Heart, Rank: deck.Ace}
 		test.hand.Draw(lastDraw)
 
 		normal, soft = test.hand.GetScores()
-		if normal != test.normal+13 || soft != test.soft+3 {
-			t.Fatalf("expected score after draw: %d (%d), got: %d (%d)", test.normal, test.soft, normal, soft)
+		normalAfterDraw, softAfterDraw := test.normal+22, test.soft+12
+		if normal != normalAfterDraw || soft != softAfterDraw {
+			t.Fatalf("expected score after draw: %d (%d), got: %d (%d)", normalAfterDraw, softAfterDraw, normal, soft)
 		}
 
 		top := test.hand.TopCard()

@@ -22,11 +22,11 @@ func New(cards ...deck.Card) Hand {
 	return h
 }
 
-func (h *Hand) Draw(card deck.Card) {
+func (h *Hand) Draw(cards ...deck.Card) {
 	if h.Cards == nil {
 		h.Cards = &[]deck.Card{}
 	}
-	*h.Cards = append(*h.Cards, card)
+	*h.Cards = append(*h.Cards, cards...)
 	h.calcScore()
 }
 
