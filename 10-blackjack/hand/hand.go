@@ -5,6 +5,8 @@ import (
 	"github.com/artslob/gophercises/09-deck/deck"
 )
 
+const Blackjack = 21
+
 type Hand struct {
 	Cards         *[]deck.Card
 	normalScore   int
