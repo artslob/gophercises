@@ -76,8 +76,8 @@ F:
 			top := d.GetTopCard()
 			player.Draw(top)
 			fmt.Printf("You got %s\n", stringifyCard(top))
+			fmt.Printf("Score: %s\n", player.ScoreString())
 			normal, soft := player.GetScores()
-			fmt.Printf("Score: %s\n", player.StringifyScores(normal, soft))
 			if soft == blackjack || normal == blackjack {
 				fmt.Println("You won!")
 				return
@@ -95,8 +95,8 @@ F:
 
 	fmt.Printf("\nYour`s score: %s\n", player.ScoreString())
 
+	fmt.Printf("Dealers turn. His hand: %s, score: %s\n", stringifyHand(dealer), dealer.ScoreString())
 	dNormal, dSoft := dealer.GetScores()
-	fmt.Printf("Dealers turn. His hand: %s, score: %s\n", stringifyHand(dealer), dealer.StringifyScores(dNormal, dSoft))
 	if dNormal <= 16 || dSoft == 17 {
 		top := d.GetTopCard()
 		dealer.Draw(top)

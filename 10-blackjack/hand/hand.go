@@ -46,10 +46,6 @@ func (h *Hand) GetScores() (int, int) {
 
 func (h *Hand) ScoreString() string {
 	normal, soft := h.GetScores()
-	return h.StringifyScores(normal, soft)
-}
-
-func (h Hand) StringifyScores(normal, soft int) string {
 	return fmt.Sprintf("%d (%d)", normal, soft)
 }
 
