@@ -34,6 +34,10 @@ func (h Hand) TopCard() deck.Card {
 	return (*h.Cards)[len(*h.Cards)-1]
 }
 
+func (h Hand) Size() int {
+	return len(*h.Cards)
+}
+
 func (h *Hand) Score() int {
 	h.calcScore()
 	return h.normalScore

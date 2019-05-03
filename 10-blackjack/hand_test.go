@@ -10,11 +10,11 @@ func TestHandDraw(t *testing.T) {
 	h := hand.Hand{}
 	h.Draw(deck.Card{Suit: deck.Club, Rank: deck.Ace})
 	h.Draw(deck.Card{Suit: deck.Heart, Rank: deck.Seven})
-	if len(*h.Cards) != 2 {
+	if h.Size() != 2 {
 		t.Fatal("expected size of hand to be 2")
 	}
 	h.Draw(deck.Card{Suit: deck.Diamond, Rank: deck.Jack})
-	if len(*h.Cards) != 3 {
+	if h.Size() != 3 {
 		t.Fatal("expected size of hand to be 3")
 	}
 	last := h.TopCard()
