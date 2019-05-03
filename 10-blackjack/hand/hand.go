@@ -30,6 +30,10 @@ func (h *Hand) Draw(card deck.Card) {
 	h.calcScore()
 }
 
+func (h Hand) TopCard() deck.Card {
+	return (*h.Cards)[len(*h.Cards)-1]
+}
+
 func (h *Hand) Score() int {
 	h.calcScore()
 	return h.normalScore

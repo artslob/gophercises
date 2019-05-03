@@ -17,7 +17,7 @@ func TestHandDraw(t *testing.T) {
 	if len(*h.Cards) != 3 {
 		t.Fatal("expected size of hand to be 3")
 	}
-	last := (*h.Cards)[2]
+	last := h.TopCard()
 	if last.Suit != deck.Diamond || last.Rank != deck.Jack {
 		t.Fatal("last card is wrong:", last)
 	}
@@ -153,11 +153,17 @@ func TestHandScoreWithDraw(t *testing.T) {
 		}
 
 		test.hand.Draw(deck.Card{Suit: deck.Club, Rank: deck.Two})
-		test.hand.Draw(deck.Card{Suit: deck.Heart, Rank: deck.Ace})
+		lastDraw := deck.Card{Suit: deck.Heart, Rank: deck.Ace}
+		test.hand.Draw(lastDraw)
 
 		normal, soft = test.hand.GetScores()
 		if normal != test.normal+13 || soft != test.soft+3 {
 			t.Fatalf("expected score after draw: %d (%d), got: %d (%d)", test.normal, test.soft, normal, soft)
+		}
+
+		top := test.hand.TopCard()
+		if top.Suit != lastDraw.Suit || top.Rank != lastDraw.Rank {
+			t.Fatalf("expected top card: %s, got: %s", lastDraw, top)
 		}
 	}
 }
