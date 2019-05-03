@@ -22,32 +22,6 @@ func stringifyHand(h hand.Hand) string {
 	return strings.Join(array, ", ")
 }
 
-func maxCloseToBlackjack(normal, soft int) int {
-	if normal == soft {
-		return normal
-	}
-	max := func(a, b int) int {
-		if a > b {
-			return a
-		}
-		return b
-	}
-	min := func(a, b int) int {
-		if a < b {
-			return a
-		}
-		return b
-	}
-	if normal <= hand.Blackjack && soft <= hand.Blackjack {
-		return max(normal, soft)
-	} else if normal <= hand.Blackjack {
-		return normal
-	} else if soft <= hand.Blackjack {
-		return soft
-	}
-	return min(normal, soft)
-}
-
 func main() {
 	fmt.Println("Starting blackjack game.")
 	player, dealer := hand.Hand{}, hand.Hand{}
@@ -101,10 +75,7 @@ F:
 		fmt.Printf("Dealer draws and gets the card: %s, score: %s\n", top, dealer.ScoreString())
 	}
 
-	dealerScore := maxCloseToBlackjack(dealer.GetScores())
-	playerScore := maxCloseToBlackjack(player.GetScores())
-
-	fmt.Println(whoWon(playerScore, dealerScore))
+	fmt.Println(whoWon(player.BestScore(), dealer.BestScore()))
 }
 
 func whoWon(playerScore, dealerScore int) string {
