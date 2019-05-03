@@ -78,12 +78,17 @@ F:
 	fmt.Println(whoWon(player.BestScore(), dealer.BestScore()))
 }
 
-func whoWon(playerScore, dealerScore int) string {
-	playerWon := "You won!"
-	dealerWon := "Dealer won."
+type WinnerPerson string
 
+const (
+	playerWon WinnerPerson = "You won!"
+	dealerWon              = "Dealer won."
+	draw                   = "Draw."
+)
+
+func whoWon(playerScore, dealerScore int) WinnerPerson {
 	if playerScore == dealerScore {
-		return "Draw."
+		return draw
 	}
 	if playerScore > hand.Blackjack && dealerScore > hand.Blackjack {
 		if playerScore < dealerScore {

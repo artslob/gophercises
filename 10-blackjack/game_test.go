@@ -7,10 +7,6 @@ import (
 )
 
 func TestWhoWon(t *testing.T) {
-	const playerWon = "You won!"
-	const dealerWon = "Dealer won."
-	const draw = "Draw."
-
 	type args struct {
 		playerScore int
 		dealerScore int
@@ -18,7 +14,7 @@ func TestWhoWon(t *testing.T) {
 	tests := []struct {
 		name string
 		args args
-		want string
+		want WinnerPerson
 	}{
 		{
 			name: "zeros",
