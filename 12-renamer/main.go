@@ -43,14 +43,20 @@ func main() {
 	root := flag.String("root", "", "Root directory to be traversed")
 	Old := flag.String("old", "", "String to be renamed in filename")
 	New := flag.String("new", "", "What 'old' parameter will be renamed to")
+	no := flag.Bool("no", false, "Do not perform any operations that modify the filesystem; print what would happen")
 	flag.Parse()
 	flagIsRequired(root, "root")
 	flagIsRequired(Old, "old")
 	flagIsRequired(New, "new")
 
+	var renamer Renamer
 	defaultRenamer := NewDefaultRenamer(*Old, *New)
-	printRenamer := NewPrintRenamer(defaultRenamer)
-	if err := Walk(*root, printRenamer); err != nil {
+	if *no {
+		renamer = NewPrintRenamer(defaultRenamer)
+	} else {
+		renamer = defaultRenamer
+	}
+	if err := Walk(*root, renamer); err != nil {
 		log.Fatal("got error while walking the path: ", err)
 	}
 }
