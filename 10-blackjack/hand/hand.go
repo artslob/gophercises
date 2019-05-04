@@ -67,6 +67,16 @@ func (h *Hand) BestScore() int {
 	return h.softScore
 }
 
+func (h *Hand) IsBlackjack() bool {
+	h.calcScore()
+	return h.softScore == Blackjack || h.normalScore == Blackjack
+}
+
+func (h *Hand) MoreThanBlackjack() bool {
+	h.calcScore()
+	return h.softScore > Blackjack && h.normalScore > Blackjack
+}
+
 func (h *Hand) calcScore() {
 	if h == nil {
 		return

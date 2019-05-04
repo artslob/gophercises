@@ -24,20 +24,26 @@ func stringifyHand(h hand.Hand) string {
 
 func main() {
 	fmt.Println("Starting blackjack game.")
-	player, dealer := hand.Hand{}, hand.Hand{}
 	d := deck.New()
 	d.Shuffle()
-	for i := 0; i < 2; i++ {
-		player.Draw(d.GetTopCard())
-		dealer.Draw(d.GetTopCard())
-	}
-	fmt.Printf("Dealer have: %s and *hidden* card.\n", stringifyCard((*dealer.Cards)[0]))
+	player := hand.New(d.GetTopCard(), d.GetTopCard())
+	dealer := hand.New(d.GetTopCard(), d.GetTopCard())
+	fmt.Printf("Dealer have: %s and *hidden* card.\n", stringifyCard(dealer.TopCard()))
 
 	scanner := bufio.NewScanner(os.Stdin)
 F:
 	for {
 		fmt.Printf("\nYou have: %s.\n", stringifyHand(player))
 		fmt.Printf("Score: %s\n", player.ScoreString())
+		if player.IsBlackjack() {
+			fmt.Println(playerWon)
+			return
+		}
+		if player.MoreThanBlackjack() {
+			fmt.Println("Sorry, you lost.")
+			return
+		}
+
 		fmt.Print("Will you Stand or Hit? (h) or (s): ")
 		if !scanner.Scan() && scanner.Err() != nil {
 			log.Fatal("got error while reading input")
@@ -45,19 +51,8 @@ F:
 		input := strings.TrimSpace(scanner.Text())
 		switch input {
 		case "h":
-			top := d.GetTopCard()
-			player.Draw(top)
-			fmt.Printf("You got %s\n", stringifyCard(top))
-			fmt.Printf("Score: %s\n", player.ScoreString())
-			normal, soft := player.GetScores()
-			if soft == hand.Blackjack || normal == hand.Blackjack {
-				fmt.Println("You won!")
-				return
-			}
-			if soft > hand.Blackjack && normal > hand.Blackjack {
-				fmt.Println("Sorry, you lost.")
-				return
-			}
+			player.Draw(d.GetTopCard())
+			fmt.Printf("You got %s\n", stringifyCard(player.TopCard()))
 		case "s":
 			break F
 		default:
@@ -68,11 +63,9 @@ F:
 	fmt.Printf("\nYour`s score: %s\n", player.ScoreString())
 
 	fmt.Printf("Dealers turn. His hand: %s, score: %s\n", stringifyHand(dealer), dealer.ScoreString())
-	dNormal, dSoft := dealer.GetScores()
-	if dNormal <= 16 || dSoft == 17 {
-		top := d.GetTopCard()
-		dealer.Draw(top)
-		fmt.Printf("Dealer draws and gets the card: %s, score: %s\n", top, dealer.ScoreString())
+	if dealer.Score() <= 16 || dealer.SoftScore() == 17 {
+		dealer.Draw(d.GetTopCard())
+		fmt.Printf("Dealer draws and gets the card: %s, score: %s\n", dealer.TopCard(), dealer.ScoreString())
 	}
 
 	fmt.Println(whoWon(player.BestScore(), dealer.BestScore()))
