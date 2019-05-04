@@ -2,6 +2,8 @@ package main
 
 import (
 	"fmt"
+	"os"
+	"path/filepath"
 	"strings"
 )
 
@@ -28,8 +30,7 @@ func (r DefaultRenamer) NewName(name string) string {
 }
 
 func (r DefaultRenamer) Rename(path, oldName, newName string) error {
-	fmt.Printf("need to implement me!\n")
-	return nil
+	return os.Rename(filepath.Join(path, oldName), filepath.Join(path, newName))
 }
 
 // PrintRenamer overrides Rename method to print new name to stdout

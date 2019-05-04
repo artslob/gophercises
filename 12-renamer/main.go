@@ -48,7 +48,9 @@ func main() {
 	flagIsRequired(Old, "old")
 	flagIsRequired(New, "new")
 
-	if err := Walk(*root, NewPrintRenamer(NewDefaultRenamer(*Old, *New))); err != nil {
+	defaultRenamer := NewDefaultRenamer(*Old, *New)
+	printRenamer := NewPrintRenamer(defaultRenamer)
+	if err := Walk(*root, printRenamer); err != nil {
 		log.Fatal("got error while walking the path: ", err)
 	}
 }
