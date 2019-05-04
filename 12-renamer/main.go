@@ -58,5 +58,7 @@ func main() {
 	}
 	if err := Walk(*root, renamer); err != nil {
 		log.Fatal("got error while walking the path: ", err)
+	} else {
+		fmt.Println("Done")
 	}
 }
