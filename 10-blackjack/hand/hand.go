@@ -33,6 +33,9 @@ func (h Hand) TopCard() deck.Card {
 }
 
 func (h Hand) Size() int {
+	if h.Cards == nil || *h.Cards == nil {
+		return 0
+	}
 	return len(*h.Cards)
 }
 

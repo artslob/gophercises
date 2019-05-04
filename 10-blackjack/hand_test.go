@@ -8,6 +8,9 @@ import (
 
 func TestHandDraw(t *testing.T) {
 	h := hand.Hand{}
+	if h.Size() != 0 {
+		t.Fatal("expected size of hand to be 0")
+	}
 	h.Draw(deck.Card{Suit: deck.Club, Rank: deck.Ace})
 	h.Draw(deck.Card{Suit: deck.Heart, Rank: deck.Seven})
 	if h.Size() != 2 {
