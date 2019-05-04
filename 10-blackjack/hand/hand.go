@@ -16,9 +16,7 @@ type Hand struct {
 
 func New(cards ...deck.Card) Hand {
 	h := Hand{Cards: &[]deck.Card{}}
-	for _, card := range cards {
-		h.Draw(card)
-	}
+	h.Draw(cards...)
 	return h
 }
 
