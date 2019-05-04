@@ -8,7 +8,7 @@ import (
 type Renamer interface {
 	ContainsPattern(name string) bool
 	NewName(name string) string
-	Rename(oldName, newName string)
+	Rename(path, oldName, newName string) error
 }
 
 type DefaultRenamer struct {
@@ -27,8 +27,9 @@ func (r DefaultRenamer) NewName(name string) string {
 	return strings.ReplaceAll(name, r.old, r.new)
 }
 
-func (r DefaultRenamer) Rename(oldName, newName string) {
+func (r DefaultRenamer) Rename(path, oldName, newName string) error {
 	fmt.Printf("need to implement me!\n")
+	return nil
 }
 
 // PrintRenamer overrides Rename method to print new name to stdout
@@ -43,6 +44,7 @@ func NewPrintRenamer(defaultRenamer *DefaultRenamer) *PrintRenamer {
 	return &PrintRenamer{DefaultRenamer: *defaultRenamer}
 }
 
-func (r PrintRenamer) Rename(oldName, newName string) {
-	fmt.Printf("will rename %q to %q\n", oldName, newName)
+func (r PrintRenamer) Rename(path, oldName, newName string) error {
+	fmt.Printf("in dir %q will rename %q to %q\n", path, oldName, newName)
+	return nil
 }

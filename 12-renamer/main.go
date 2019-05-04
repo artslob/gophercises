@@ -3,6 +3,7 @@ package main
 import (
 	"errors"
 	"flag"
+	"fmt"
 	"log"
 	"os"
 	"path/filepath"
@@ -31,7 +32,9 @@ func Walk(root string, renamer Renamer) error {
 			return nil
 		}
 		newName := renamer.NewName(name)
-		renamer.Rename(name, newName)
+		if err := renamer.Rename(filepath.Dir(path), name, newName); err != nil {
+			fmt.Printf("could not rename %q to %q\n", path, newName)
+		}
 		return nil
 	})
 }
