@@ -19,3 +19,4 @@ Each solution has separate folder:
 8. [Database Phone Number Normalizer](../../tree/master/08-phone)
 9. [Deck of Cards](../../tree/master/09-deck)
 10. [Blackjack](../../tree/master/10-blackjack)
+12. [File Renaming Tool](../../tree/master/12-renamer)
