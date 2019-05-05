@@ -4,6 +4,7 @@ import (
 	"errors"
 	"flag"
 	"fmt"
+	"github.com/artslob/gophercises/12-renamer/rename"
 	"log"
 	"os"
 	"path/filepath"
@@ -16,7 +17,7 @@ func flagIsRequired(f *string, name string) {
 	}
 }
 
-func Walk(root string, renamer Renamer) error {
+func Walk(root string, renamer rename.Renamer) error {
 	if renamer == nil {
 		return errors.New("got nil renamer")
 	}
@@ -49,10 +50,10 @@ func main() {
 	flagIsRequired(Old, "old")
 	flagIsRequired(New, "new")
 
-	var renamer Renamer
-	defaultRenamer := NewDefaultRenamer(*Old, *New)
+	var renamer rename.Renamer
+	defaultRenamer := rename.NewDefaultRenamer(*Old, *New)
 	if *no {
-		renamer = NewPrintRenamer(defaultRenamer)
+		renamer = rename.NewPrintRenamer(defaultRenamer)
 	} else {
 		renamer = defaultRenamer
 	}
