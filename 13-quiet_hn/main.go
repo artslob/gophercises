@@ -26,6 +26,29 @@ func main() {
 	}
 }
 
+func root() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		if r.URL.Path != "/" {
+			http.NotFound(w, r)
+			return
+		}
+		start := time.Now()
+		stories, err := getCachedStories()
+		context := struct {
+			Stories []StoryResponse
+			Time    string
+			Err     error
+		}{
+			Stories: stories,
+			Time:    fmt.Sprintf("%.2f", time.Since(start).Seconds()),
+			Err:     err,
+		}
+		if err := index.Execute(w, context); err != nil {
+			log.Print(err)
+		}
+	}
+}
+
 var (
 	cacheStories        = []StoryResponse{}
 	cacheExpirationTime time.Time
@@ -64,29 +87,6 @@ func getCachedStories() ([]StoryResponse, error) {
 	cacheStories = stories
 	cacheExpirationTime = time.Now().Add(15 * time.Second)
 	return cacheStories, nil
-}
-
-func root() http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
-		if r.URL.Path != "/" {
-			http.NotFound(w, r)
-			return
-		}
-		start := time.Now()
-		stories, err := getCachedStories()
-		context := struct {
-			Stories []StoryResponse
-			Time    string
-			Err     error
-		}{
-			Stories: stories,
-			Time:    fmt.Sprintf("%.2f", time.Since(start).Seconds()),
-			Err:     err,
-		}
-		if err := index.Execute(w, context); err != nil {
-			log.Print(err)
-		}
-	}
 }
 
 func merge(storiesChannels ...<-chan StoryResponse) <-chan StoryResponse {
