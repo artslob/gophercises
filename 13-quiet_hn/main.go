@@ -44,7 +44,7 @@ func root() http.HandlerFunc {
 			_, _ = fmt.Fprintf(w, "Some error occurred while processing request: %q", err)
 			return
 		}
-		ids := []int{}
+		ids := []int64{}
 		if err := json.Unmarshal(bodyBytes, &ids); err != nil {
 			_, _ = fmt.Fprintf(w, "Could not parse response: %q", err)
 		}
@@ -92,7 +92,7 @@ func merge(storiesChannels ...<-chan StoryResponse) <-chan StoryResponse {
 	return out
 }
 
-func getStories(in <-chan int) <-chan StoryResponse {
+func getStories(in <-chan int64) <-chan StoryResponse {
 	out := make(chan StoryResponse)
 	go func() {
 		for n := range in {
@@ -119,8 +119,8 @@ func getStories(in <-chan int) <-chan StoryResponse {
 	return out
 }
 
-func gen(nums ...int) <-chan int {
-	out := make(chan int)
+func gen(nums ...int64) <-chan int64 {
+	out := make(chan int64)
 	go func() {
 		for _, n := range nums {
 			out <- n
