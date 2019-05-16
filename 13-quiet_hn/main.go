@@ -9,6 +9,7 @@ import (
 	"net/http"
 	"sort"
 	"sync"
+	"time"
 )
 
 const (
@@ -31,6 +32,7 @@ func root() http.HandlerFunc {
 			http.NotFound(w, r)
 			return
 		}
+		start := time.Now()
 		response, err := http.Get(NewStoriesURL)
 		if err != nil {
 			_, _ = fmt.Fprintf(w, "Some error occurred while processing request: %q", err)
@@ -56,7 +58,14 @@ func root() http.HandlerFunc {
 			stories = append(stories, story)
 		}
 		sort.Sort(ByIdsDescendant(stories))
-		if err := index.Execute(w, stories); err != nil {
+		context := struct {
+			Stories []StoryResponse
+			Time    float64
+		}{
+			Stories: stories,
+			Time:    float64(time.Since(start).Nanoseconds()/1e6) / 1000.0,
+		}
+		if err := index.Execute(w, context); err != nil {
 			log.Print(err)
 		}
 	}
