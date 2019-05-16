@@ -14,7 +14,8 @@ In this exercise we aren't going to be building a clone from scratch, but we are
 and use it to explore concurrency and caching in Go. That said, you are welcome to build your own HN clone before
 moving forward with the exercise by reading what the current one does below and writing a similar server.
 
-The application then renders all of those stories, along with some footer text that logs how long it took to render the webpage.
+The application then renders all of those stories, along with some footer text that logs how long it took
+to render the web page.
 
 ![example rendering of the Quiet HN page](https://www.dropbox.com/s/nexh2oql60a25df/Screenshot%202018-04-02%2017.34.01.png?dl=0&raw=1)
 
@@ -28,3 +29,12 @@ our concurrency changes.
 
 1. Stories MUST retain their original order
 2. Make sure you ALWAYS print out 30, and only 30, stories
+
+### Caching
+In addition to adding concurrency, add caching to the application. Your cache should store the results of the top
+`numStories` stories so that subsequent web requests don't require additional API calls, but that cache should expire
+at some point after which time more API calls will be needed to update the cache.
+
+How you implement this is up to you, but you should definitely consider the fact that many web requests can be
+processed at the same time, so you may need to take race conditions into consideration. A great way to test this
+is the [-race](https://blog.golang.org/race-detector) flag.
