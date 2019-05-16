@@ -60,10 +60,10 @@ func root() http.HandlerFunc {
 		sort.Sort(ByIdsDescendant(stories))
 		context := struct {
 			Stories []StoryResponse
-			Time    float64
+			Time    string
 		}{
 			Stories: stories,
-			Time:    float64(time.Since(start).Nanoseconds()/1e6) / 1000.0,
+			Time:    fmt.Sprintf("%.2f", time.Since(start).Seconds()),
 		}
 		if err := index.Execute(w, context); err != nil {
 			log.Print(err)
