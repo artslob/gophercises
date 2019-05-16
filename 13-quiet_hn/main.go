@@ -26,6 +26,46 @@ func main() {
 	}
 }
 
+var (
+	cacheStories        = []StoryResponse{}
+	cacheExpirationTime time.Time
+	cacheMux            sync.Mutex
+)
+
+func getCachedStories() ([]StoryResponse, error) {
+	cacheMux.Lock()
+	defer cacheMux.Unlock()
+	if time.Now().Before(cacheExpirationTime) {
+		return cacheStories, nil
+	}
+	response, err := http.Get(NewStoriesURL)
+	if err != nil {
+		return nil, err
+	}
+	defer func() { _ = response.Body.Close() }()
+	bodyBytes, err := ioutil.ReadAll(response.Body)
+	if err != nil {
+		return nil, err
+	}
+	ids := []int64{}
+	if err := json.Unmarshal(bodyBytes, &ids); err != nil {
+		return nil, err
+	}
+	in := gen(ids[:30]...)
+	storiesChannels := []<-chan StoryResponse{}
+	for range ids {
+		storiesChannels = append(storiesChannels, getStories(in))
+	}
+	stories := []StoryResponse{}
+	for story := range merge(storiesChannels...) {
+		stories = append(stories, story)
+	}
+	sort.Sort(ByIdsDescendant(stories))
+	cacheStories = stories
+	cacheExpirationTime = time.Now().Add(15 * time.Second)
+	return cacheStories, nil
+}
+
 func root() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		if r.URL.Path != "/" {
@@ -33,31 +73,11 @@ func root() http.HandlerFunc {
 			return
 		}
 		start := time.Now()
-		response, err := http.Get(NewStoriesURL)
+		stories, err := getCachedStories()
 		if err != nil {
 			_, _ = fmt.Fprintf(w, "Some error occurred while processing request: %q", err)
 			return
 		}
-		defer func() { _ = response.Body.Close() }()
-		bodyBytes, err := ioutil.ReadAll(response.Body)
-		if err != nil {
-			_, _ = fmt.Fprintf(w, "Some error occurred while processing request: %q", err)
-			return
-		}
-		ids := []int64{}
-		if err := json.Unmarshal(bodyBytes, &ids); err != nil {
-			_, _ = fmt.Fprintf(w, "Could not parse response: %q", err)
-		}
-		in := gen(ids[:30]...)
-		storiesChannels := []<-chan StoryResponse{}
-		for range ids {
-			storiesChannels = append(storiesChannels, getStories(in))
-		}
-		stories := []StoryResponse{}
-		for story := range merge(storiesChannels...) {
-			stories = append(stories, story)
-		}
-		sort.Sort(ByIdsDescendant(stories))
 		context := struct {
 			Stories []StoryResponse
 			Time    string
