@@ -67,6 +67,7 @@ func main() {
 	mux.HandleFunc("/", hello)
 	mux.HandleFunc("/panic/", wrapper(panicDemo, *logStackTrace, *isDev))
 	mux.HandleFunc("/panic-after/", wrapper(panicAfterDemo, *logStackTrace, *isDev))
+	ServeFiles(mux, "/files", true)
 	log.Fatal(http.ListenAndServe(":8080", mux))
 }
 
