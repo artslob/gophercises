@@ -32,3 +32,22 @@ type Story struct {
 	// In the case of stories or polls, the total comment count.
 	Descendants int64 `json:"descendants"`
 }
+
+type StoryResponse struct {
+	Story
+	Err error
+}
+
+type ByIdsDescendant []StoryResponse
+
+func (a ByIdsDescendant) Len() int {
+	return len(a)
+}
+
+func (a ByIdsDescendant) Less(i, j int) bool {
+	return a[i].Id > a[j].Id
+}
+
+func (a ByIdsDescendant) Swap(i, j int) {
+	a[i], a[j] = a[j], a[i]
+}

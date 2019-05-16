@@ -7,6 +7,7 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
+	"sort"
 	"sync"
 )
 
@@ -50,16 +51,15 @@ func root() http.HandlerFunc {
 		for range ids {
 			storiesChannels = append(storiesChannels, getStories(in))
 		}
-		// TODO retain stories original order
-		if err := index.Execute(w, merge(storiesChannels...)); err != nil {
+		stories := []StoryResponse{}
+		for story := range merge(storiesChannels...) {
+			stories = append(stories, story)
+		}
+		sort.Sort(ByIdsDescendant(stories))
+		if err := index.Execute(w, stories); err != nil {
 			log.Print(err)
 		}
 	}
-}
-
-type StoryResponse struct {
-	Story
-	Err error
 }
 
 func merge(storiesChannels ...<-chan StoryResponse) <-chan StoryResponse {
