@@ -33,13 +33,18 @@
 </head>
 <body>
 <h1>Quiet Hacker News</h1>
-<ol>
-    {{ range .Stories }}
-        {{if not .Err }}
-            <li><a href="{{.Story.Url}}">{{.Story.Title}}</a><span class="by">({{.Story.By}})</span></li>
-        {{end}}
-    {{ end }}
-</ol>
+{{ if .Err }}
+    <h3>Sorry, some error occurred. Error description: {{ .Err }}</h3>
+    <h3>Try again!</h3>
+{{ else }}
+    <ol>
+        {{ range .Stories }}
+            {{if not .Err }}
+                <li><a href="{{.Story.Url}}">{{.Story.Title}}</a><span class="by">({{.Story.By}})</span></li>
+            {{end}}
+        {{ end }}
+    </ol>
+{{ end }}
 <p class="time">This page was rendered in {{.Time}} seconds</p>
 <p class="footer">This page is heavily inspired by <a href="https://speak.sh/posts/quiet-hacker-news">Quiet Hacker
         News</a> and was adapted for a <a href="https://gophercises.com/exercises/quiet_hn">Gophercises Exercise</a>.

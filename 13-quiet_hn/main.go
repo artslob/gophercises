@@ -74,16 +74,14 @@ func root() http.HandlerFunc {
 		}
 		start := time.Now()
 		stories, err := getCachedStories()
-		if err != nil {
-			_, _ = fmt.Fprintf(w, "Some error occurred while processing request: %q", err)
-			return
-		}
 		context := struct {
 			Stories []StoryResponse
 			Time    string
+			Err     error
 		}{
 			Stories: stories,
 			Time:    fmt.Sprintf("%.2f", time.Since(start).Seconds()),
+			Err:     err,
 		}
 		if err := index.Execute(w, context); err != nil {
 			log.Print(err)
