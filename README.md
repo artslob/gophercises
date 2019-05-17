@@ -22,3 +22,4 @@ Each solution has separate folder:
 12. [File Renaming Tool](../../tree/master/12-renamer)
 13. [Quiet HN](../../tree/master/13-quiet_hn)
 14. [Recover Middleware](../../tree/master/14-recover)
+15. [Recover Middleware w/ Source Code](../../tree/master/15-recover_chroma)
