@@ -3,6 +3,8 @@ package main
 import (
 	"errors"
 	"fmt"
+	"github.com/alecthomas/chroma/quick"
+	"github.com/alecthomas/chroma/styles"
 	"io/ioutil"
 	"log"
 	"net/http"
@@ -47,7 +49,8 @@ func (h *SourceFileHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		http.NotFound(w, r)
 		return
 	}
-	_, _ = w.Write(content)
+	err = quick.Highlight(w, string(content), "go", "html", styles.Dracula.Name)
+	log.Print(err)
 }
 
 func (h *SourceFileHandler) readFile(name string) ([]byte, error) {
