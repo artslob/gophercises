@@ -51,8 +51,9 @@ func (h *SourceFileHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		http.NotFound(w, r)
 		return
 	}
-	err = quick.Highlight(w, string(content), "go", "html", styles.Dracula.Name)
-	log.Print(err)
+	if err := quick.Highlight(w, string(content), "go", "html", styles.Dracula.Name); err != nil {
+		log.Print(err)
+	}
 }
 
 func (h *SourceFileHandler) readFile(name string) ([]byte, error) {
