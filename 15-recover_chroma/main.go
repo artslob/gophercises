@@ -36,5 +36,5 @@ func panicAfterDemo(w http.ResponseWriter, r *http.Request) {
 }
 
 func funcThatPanics() {
-	panic("Oh no!")
+	panic("Error returned by panic")
 }

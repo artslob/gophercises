@@ -79,7 +79,7 @@ func (wr RecoverWrapper) getMessage() string {
 		query := url.Values{"line": []string{groups[3]}}
 		return fmt.Sprintf(`<a href="%s%s?%s">%s:%s</a>`, wr.filesPattern, groups[1], query.Encode(), groups[1], groups[3])
 	})
-	return fmt.Sprintf("stack:\n%s", stack)
+	return fmt.Sprintf("<h3>Stack:</h3>\n<pre><code>%s</code></pre>", stack)
 }
 
 type MiddlewareResponseWriter struct {
