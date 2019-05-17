@@ -1,7 +1,9 @@
 package main
 
 import (
+	"bytes"
 	"fmt"
+	"html/template"
 	"log"
 	"net/http"
 	"regexp"
@@ -14,6 +16,7 @@ type RecoverWrapper struct {
 	isDev         bool
 	lst           bool
 	sourcesRegexp *regexp.Regexp
+	tmpl          *template.Template
 }
 
 func NewRecoverWrapper(next http.Handler, isDev bool, lst bool) *RecoverWrapper {
@@ -21,7 +24,13 @@ func NewRecoverWrapper(next http.Handler, isDev bool, lst bool) *RecoverWrapper 
 		panic("got empty handler")
 	}
 	r := regexp.MustCompile(`((/\S+)+\.go):(\d+)`)
-	return &RecoverWrapper{next: next, isDev: isDev, lst: lst, sourcesRegexp: r}
+	return &RecoverWrapper{
+		next:          next,
+		isDev:         isDev,
+		lst:           lst,
+		sourcesRegexp: r,
+		tmpl:          template.Must(template.ParseFiles("recover.html")),
+	}
 }
 
 func (wr RecoverWrapper) ServeHTTP(w http.ResponseWriter, r *http.Request) {
@@ -38,9 +47,25 @@ func (wr RecoverWrapper) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		if wr.isDev {
 			stack := string(debug.Stack())
 			fmt.Println(wr.sourcesRegexp.FindAllString(stack, -1))
-			message = fmt.Sprintf("error: %s\nstack:\n%s", r, stack)
+			message = fmt.Sprintf("stack:\n%s", stack)
 		}
-		http.Error(w, message, http.StatusInternalServerError)
+		status := http.StatusInternalServerError
+		context := struct {
+			Status  int
+			Err     interface{}
+			Message string
+		}{
+			Status:  status,
+			Err:     r,
+			Message: message,
+		}
+		var buffer bytes.Buffer
+		if err := wr.tmpl.Execute(&buffer, context); err != nil {
+			log.Println(err)
+			return
+		}
+		w.WriteHeader(status)
+		_, _ = fmt.Fprintln(w, buffer.String())
 	}()
 	proxyWriter := &MiddlewareResponseWriter{ResponseWriter: w}
 	wr.next.ServeHTTP(proxyWriter, r)
