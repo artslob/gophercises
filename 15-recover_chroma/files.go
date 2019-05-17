@@ -3,7 +3,9 @@ package main
 import (
 	"errors"
 	"fmt"
-	"github.com/alecthomas/chroma/quick"
+	"github.com/alecthomas/chroma"
+	"github.com/alecthomas/chroma/formatters/html"
+	"github.com/alecthomas/chroma/lexers"
 	"github.com/alecthomas/chroma/styles"
 	"io/ioutil"
 	"log"
@@ -51,9 +53,25 @@ func (h *SourceFileHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		http.NotFound(w, r)
 		return
 	}
-	if err := quick.Highlight(w, string(content), "go", "html", styles.Dracula.Name); err != nil {
-		log.Print(err)
+	if err := h.format(w, string(content)); err != nil {
+		log.Println(err)
+		http.NotFound(w, r)
+		return
 	}
+}
+
+func (h *SourceFileHandler) format(w http.ResponseWriter, content string) error {
+	l := chroma.Coalesce(lexers.Get("go"))
+	f := html.New(html.Standalone(), html.WithLineNumbers(), html.TabWidth(4), html.LineNumbersInTable())
+	s := styles.Dracula
+	it, err := l.Tokenise(nil, string(content))
+	if err != nil {
+		return err
+	}
+	if err := f.Format(w, s, it); err != nil {
+		return err
+	}
+	return nil
 }
 
 func (h *SourceFileHandler) readFile(name string) ([]byte, error) {
