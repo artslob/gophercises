@@ -6,6 +6,7 @@ import (
 	"html/template"
 	"log"
 	"net/http"
+	"net/url"
 	"regexp"
 	"runtime/debug"
 )
@@ -17,9 +18,10 @@ type RecoverWrapper struct {
 	lst           bool
 	sourcesRegexp *regexp.Regexp
 	tmpl          *template.Template
+	filesPattern  string
 }
 
-func NewRecoverWrapper(next http.Handler, isDev bool, lst bool) *RecoverWrapper {
+func NewRecoverWrapper(next http.Handler, isDev bool, lst bool, filesPattern string) *RecoverWrapper {
 	if next == nil {
 		panic("got empty handler")
 	}
@@ -30,6 +32,7 @@ func NewRecoverWrapper(next http.Handler, isDev bool, lst bool) *RecoverWrapper 
 		lst:           lst,
 		sourcesRegexp: r,
 		tmpl:          template.Must(template.ParseFiles("recover.html")),
+		filesPattern:  filesPattern,
 	}
 }
 
@@ -73,7 +76,8 @@ func (wr RecoverWrapper) getMessage() string {
 	stack := string(debug.Stack())
 	stack = wr.sourcesRegexp.ReplaceAllStringFunc(stack, func(s string) string {
 		groups := wr.sourcesRegexp.FindStringSubmatch(s)
-		return fmt.Sprintf(`<a href="%s">%s:%s</a>`, groups[1], groups[1], groups[3])
+		query := url.Values{"line": []string{groups[3]}}
+		return fmt.Sprintf(`<a href="%s%s?%s">%s:%s</a>`, wr.filesPattern, groups[1], query.Encode(), groups[1], groups[3])
 	})
 	return fmt.Sprintf("stack:\n%s", stack)
 }

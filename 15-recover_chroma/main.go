@@ -7,6 +7,8 @@ import (
 	"net/http"
 )
 
+const filesPattern = "/files"
+
 func main() {
 	lst := flag.Bool("lst", false, "set flag if stack trace logging to stderr is required")
 	isDev := flag.Bool("dev", false, "set flag if stack trace logging to page is required")
@@ -14,9 +16,9 @@ func main() {
 
 	mux := http.NewServeMux()
 	mux.HandleFunc("/", hello)
-	mux.Handle("/panic/", NewRecoverWrapper(http.HandlerFunc(panicDemo), *isDev, *lst))
-	mux.Handle("/panic-after/", NewRecoverWrapper(http.HandlerFunc(panicAfterDemo), *isDev, *lst))
-	ServeFiles(mux, "/files", true)
+	mux.Handle("/panic/", NewRecoverWrapper(http.HandlerFunc(panicDemo), *isDev, *lst, filesPattern))
+	mux.Handle("/panic-after/", NewRecoverWrapper(http.HandlerFunc(panicAfterDemo), *isDev, *lst, filesPattern))
+	ServeFiles(mux, filesPattern, true)
 	log.Fatal(http.ListenAndServe(":8080", mux))
 }
 
