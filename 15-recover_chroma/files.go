@@ -10,6 +10,7 @@ import (
 	"net/http"
 	"os"
 	pathPackage "path"
+	"strings"
 )
 
 func ServeFiles(mux *http.ServeMux, pattern string, addDefaultPaths bool, paths ...string) {
@@ -55,6 +56,10 @@ func (h *SourceFileHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *SourceFileHandler) readFile(name string) ([]byte, error) {
+	if !strings.HasSuffix(name, ".go") {
+		return nil, errors.New(fmt.Sprintf("%q is not .go file", name))
+	}
+
 	f, err := h.root.Open(name)
 	if err != nil {
 		return nil, err
