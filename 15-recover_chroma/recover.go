@@ -7,27 +7,31 @@ import (
 	"runtime/debug"
 )
 
-func wrapper(next http.HandlerFunc, logStackTrace bool, isDev bool) http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
-		defer func() {
-			r := recover()
-			if r == nil {
-				return
-			}
-			log.Println(r)
-			if logStackTrace {
-				log.Println(string(debug.Stack()))
-			}
-			message := "Something went wrong"
-			if isDev {
-				message = fmt.Sprintf("error: %s\nstack:\n%s", r, debug.Stack())
-			}
-			http.Error(w, message, http.StatusInternalServerError)
-		}()
-		writer := &MiddlewareResponseWriter{ResponseWriter: w}
-		next(writer, r)
-		_ = writer.flush()
-	}
+type RecoverWrapper struct {
+	next          http.Handler
+	logStackTrace bool
+	isDev         bool
+}
+
+func (wr RecoverWrapper) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	defer func() {
+		r := recover()
+		if r == nil {
+			return
+		}
+		log.Println(r)
+		if wr.logStackTrace {
+			log.Println(string(debug.Stack()))
+		}
+		message := "Something went wrong"
+		if wr.isDev {
+			message = fmt.Sprintf("error: %s\nstack:\n%s", r, debug.Stack())
+		}
+		http.Error(w, message, http.StatusInternalServerError)
+	}()
+	proxyWriter := &MiddlewareResponseWriter{ResponseWriter: w}
+	wr.next.ServeHTTP(proxyWriter, r)
+	_ = proxyWriter.flush()
 }
 
 type MiddlewareResponseWriter struct {

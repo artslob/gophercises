@@ -14,8 +14,16 @@ func main() {
 
 	mux := http.NewServeMux()
 	mux.HandleFunc("/", hello)
-	mux.HandleFunc("/panic/", wrapper(panicDemo, *logStackTrace, *isDev))
-	mux.HandleFunc("/panic-after/", wrapper(panicAfterDemo, *logStackTrace, *isDev))
+	mux.Handle("/panic/", RecoverWrapper{
+		next:          http.HandlerFunc(panicDemo),
+		logStackTrace: *logStackTrace,
+		isDev:         *isDev,
+	})
+	mux.Handle("/panic-after/", RecoverWrapper{
+		next:          http.HandlerFunc(panicAfterDemo),
+		logStackTrace: *logStackTrace,
+		isDev:         *isDev,
+	})
 	ServeFiles(mux, "/files", true)
 	log.Fatal(http.ListenAndServe(":8080", mux))
 }
