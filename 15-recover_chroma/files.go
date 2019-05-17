@@ -12,6 +12,7 @@ import (
 	"net/http"
 	"os"
 	pathPackage "path"
+	"strconv"
 	"strings"
 )
 
@@ -53,16 +54,18 @@ func (h *SourceFileHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		http.NotFound(w, r)
 		return
 	}
-	if err := h.format(w, string(content)); err != nil {
+	if err := h.format(w, string(content), r.URL.Query().Get("line")); err != nil {
 		log.Println(err)
 		http.NotFound(w, r)
 		return
 	}
 }
 
-func (h *SourceFileHandler) format(w http.ResponseWriter, content string) error {
+func (h *SourceFileHandler) format(w http.ResponseWriter, content string, line string) error {
+	lineInt, _ := strconv.Atoi(strings.TrimSpace(line))
 	l := chroma.Coalesce(lexers.Get("go"))
-	f := html.New(html.Standalone(), html.WithLineNumbers(), html.TabWidth(4), html.LineNumbersInTable())
+	f := html.New(html.Standalone(), html.WithLineNumbers(), html.TabWidth(4), html.LineNumbersInTable(),
+		html.HighlightLines([][2]int{{lineInt, lineInt}}))
 	s := styles.Dracula
 	it, err := l.Tokenise(nil, string(content))
 	if err != nil {
