@@ -8,9 +8,17 @@ import (
 )
 
 type RecoverWrapper struct {
-	next          http.Handler
-	logStackTrace bool
-	isDev         bool
+	next http.Handler
+	// logStackTrace
+	isDev bool
+	lst   bool
+}
+
+func NewRecoverWrapper(next http.Handler, isDev bool, lst bool) *RecoverWrapper {
+	if next == nil {
+		panic("got empty handler")
+	}
+	return &RecoverWrapper{next: next, isDev: isDev, lst: lst}
 }
 
 func (wr RecoverWrapper) ServeHTTP(w http.ResponseWriter, r *http.Request) {
@@ -20,7 +28,7 @@ func (wr RecoverWrapper) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 		log.Println(r)
-		if wr.logStackTrace {
+		if wr.lst {
 			log.Println(string(debug.Stack()))
 		}
 		message := "Something went wrong"

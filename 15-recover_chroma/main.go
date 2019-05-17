@@ -8,22 +8,14 @@ import (
 )
 
 func main() {
-	logStackTrace := flag.Bool("lst", false, "set flag if stack trace logging to stderr is required")
+	lst := flag.Bool("lst", false, "set flag if stack trace logging to stderr is required")
 	isDev := flag.Bool("dev", false, "set flag if stack trace logging to page is required")
 	flag.Parse()
 
 	mux := http.NewServeMux()
 	mux.HandleFunc("/", hello)
-	mux.Handle("/panic/", RecoverWrapper{
-		next:          http.HandlerFunc(panicDemo),
-		logStackTrace: *logStackTrace,
-		isDev:         *isDev,
-	})
-	mux.Handle("/panic-after/", RecoverWrapper{
-		next:          http.HandlerFunc(panicAfterDemo),
-		logStackTrace: *logStackTrace,
-		isDev:         *isDev,
-	})
+	mux.Handle("/panic/", NewRecoverWrapper(http.HandlerFunc(panicDemo), *isDev, *lst))
+	mux.Handle("/panic-after/", NewRecoverWrapper(http.HandlerFunc(panicAfterDemo), *isDev, *lst))
 	ServeFiles(mux, "/files", true)
 	log.Fatal(http.ListenAndServe(":8080", mux))
 }
