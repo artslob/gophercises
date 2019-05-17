@@ -4,21 +4,24 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"regexp"
 	"runtime/debug"
 )
 
 type RecoverWrapper struct {
 	next http.Handler
 	// logStackTrace
-	isDev bool
-	lst   bool
+	isDev         bool
+	lst           bool
+	sourcesRegexp *regexp.Regexp
 }
 
 func NewRecoverWrapper(next http.Handler, isDev bool, lst bool) *RecoverWrapper {
 	if next == nil {
 		panic("got empty handler")
 	}
-	return &RecoverWrapper{next: next, isDev: isDev, lst: lst}
+	r := regexp.MustCompile(`((/\S+)+\.go):(\d+)`)
+	return &RecoverWrapper{next: next, isDev: isDev, lst: lst, sourcesRegexp: r}
 }
 
 func (wr RecoverWrapper) ServeHTTP(w http.ResponseWriter, r *http.Request) {
@@ -33,7 +36,9 @@ func (wr RecoverWrapper) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		}
 		message := "Something went wrong"
 		if wr.isDev {
-			message = fmt.Sprintf("error: %s\nstack:\n%s", r, debug.Stack())
+			stack := string(debug.Stack())
+			fmt.Println(wr.sourcesRegexp.FindAllString(stack, -1))
+			message = fmt.Sprintf("error: %s\nstack:\n%s", r, stack)
 		}
 		http.Error(w, message, http.StatusInternalServerError)
 	}()
