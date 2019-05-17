@@ -19,6 +19,7 @@ func ServeFiles(mux *http.ServeMux, pattern string, addDefaultPaths bool, paths 
 		neededCap += len(defaultEnvPaths)
 	}
 	if neededCap == 0 {
+		log.Println("serve files did not register any handlers")
 		return
 	}
 	allPaths := make([]string, 0, neededCap)
