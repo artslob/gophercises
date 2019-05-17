@@ -43,21 +43,15 @@ func (wr RecoverWrapper) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		if wr.lst {
 			log.Println(string(debug.Stack()))
 		}
-		message := "Something went wrong"
-		if wr.isDev {
-			stack := string(debug.Stack())
-			fmt.Println(wr.sourcesRegexp.FindAllString(stack, -1))
-			message = fmt.Sprintf("stack:\n%s", stack)
-		}
 		status := http.StatusInternalServerError
 		context := struct {
 			Status  int
 			Err     interface{}
-			Message string
+			Message template.HTML
 		}{
 			Status:  status,
 			Err:     r,
-			Message: message,
+			Message: template.HTML(wr.getMessage()),
 		}
 		var buffer bytes.Buffer
 		if err := wr.tmpl.Execute(&buffer, context); err != nil {
@@ -70,6 +64,18 @@ func (wr RecoverWrapper) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	proxyWriter := &MiddlewareResponseWriter{ResponseWriter: w}
 	wr.next.ServeHTTP(proxyWriter, r)
 	_ = proxyWriter.flush()
+}
+
+func (wr RecoverWrapper) getMessage() string {
+	if !wr.isDev {
+		return "Something went wrong"
+	}
+	stack := string(debug.Stack())
+	stack = wr.sourcesRegexp.ReplaceAllStringFunc(stack, func(s string) string {
+		groups := wr.sourcesRegexp.FindStringSubmatch(s)
+		return fmt.Sprintf(`<a href="%s">%s:%s</a>`, groups[1], groups[1], groups[3])
+	})
+	return fmt.Sprintf("stack:\n%s", stack)
 }
 
 type MiddlewareResponseWriter struct {
